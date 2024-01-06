@@ -3,7 +3,4 @@ __type__ = "encoding all characters in the payload into their URL encoding equiv
 
 
 def tamper(payload, **kwargs):
-    retval = ""
-    for char in payload:
-        retval += "%{}".format(ord(char))
-    return retval
+    return "".join(f"%{ord(char)}" for char in payload)

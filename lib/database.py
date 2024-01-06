@@ -89,10 +89,7 @@ def insert_url(netloc, working_tampers, identified_protections,  cursor, webserv
         for item in current_cache:
             _, cached_netloc, _, _, _ = item
             if str(cached_netloc).strip() == str(netloc).strip():
-                if return_found:
-                    return item
-                else:
-                    return False
+                return item if return_found else False
         if not is_inserted:
             if len(identified_protections) > 1:
                 if lib.settings.UNKNOWN_FIREWALL_NAME in identified_protections:

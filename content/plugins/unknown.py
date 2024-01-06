@@ -45,7 +45,13 @@ def detect(content, **kwargs):
             if detection.search(headers[head]) is not None:
                 discovered += 1
             if detection.search(head) is not None:
-                if not any(head == c for c in [HTTP_HEADER.CONTENT_SECURITY, HTTP_HEADER.STRICT_TRANSPORT]):
+                if all(
+                    head != c
+                    for c in [
+                        HTTP_HEADER.CONTENT_SECURITY,
+                        HTTP_HEADER.STRICT_TRANSPORT,
+                    ]
+                ):
                     discovered += 1
     if discovered > 1:
         return True

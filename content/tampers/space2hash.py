@@ -5,11 +5,5 @@ __type__ = "changing the payload spaces to obfuscated hashes with a newline"
 
 
 def tamper(payload, **kwargs):
-    modifier = "%%23{}%%0A".format(uuid.uuid4().hex[1:5])
-    retval = ""
-    for char in payload:
-        if char == " ":
-            retval += modifier
-        else:
-            retval += char
-    return retval
+    modifier = f"%%23{uuid.uuid4().hex[1:5]}%%0A"
+    return "".join(modifier if char == " " else char for char in payload)

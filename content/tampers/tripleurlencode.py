@@ -10,7 +10,7 @@ __type__ = "triple URL encoding the payload characters"
 
 
 def tamper(payload, **kwargs):
-    danger_chars = string.punctuation + " "
+    danger_chars = f"{string.punctuation} "
     extra_danger_chars = ("_", ".")
     retval = ""
     for char in list(payload):

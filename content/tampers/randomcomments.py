@@ -12,10 +12,7 @@ def tamper(payload, **kwargs):
     retval = ""
     for char in payload:
         random_chars = [random.choice(characters) for _ in range(10)]
-        if char in random_chars:
-            retval += "{}{}".format(modifer, char)
-        else:
-            retval += char
+        retval += f"{modifer}{char}" if char in random_chars else char
     if modifer not in retval:
         retval = tamper(payload, **kwargs)
     return retval

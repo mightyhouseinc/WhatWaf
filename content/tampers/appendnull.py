@@ -4,4 +4,4 @@ __type__ = "appending a NULL byte to the end of the payload"
 
 def tamper(payload, **kwargs):
     payload = str(payload)
-    return "{}%00".format(payload)
+    return f"{payload}%00"

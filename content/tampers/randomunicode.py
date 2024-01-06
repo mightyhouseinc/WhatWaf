@@ -22,6 +22,4 @@ def tamper(payload, **kwargs):
             retval += char
         else:
             retval += char
-    if retval == payload:
-        return tamper(payload, **kwargs)
-    return retval
+    return tamper(payload, **kwargs) if retval == payload else retval

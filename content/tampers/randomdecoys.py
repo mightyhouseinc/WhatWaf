@@ -21,19 +21,10 @@ def tamper(payload, **kwargs):
     retval += random.choice(decoys)
     for char in payload:
         do_it = random.randint(1, 5) < 3
-        if char == "<":
-            if do_it:
-                retval += "{}{}".format(random.choice(decoys), char)
-            else:
-                retval += char
-        elif char == ">":
-            if do_it:
-                retval += "{}{}".format(char, random.choice(decoys))
-            else:
-                retval += char
-        else:
+        if char == "<" and do_it:
+            retval += f"{random.choice(decoys)}{char}"
+        elif char == "<" or char == ">" and not do_it or char != ">":
             retval += char
-    if not retval == payload:
-        return retval
-    else:
-        return tamper(payload, **kwargs)
+        else:
+            retval += f"{char}{random.choice(decoys)}"
+    return retval if retval != payload else tamper(payload, **kwargs)

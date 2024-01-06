@@ -47,7 +47,7 @@ class Miner(object):
         """
         current_opt = json.load(open(self.miner_conf_path))
         given_opt = self.do_opt
-        if not current_opt["is_opt_in"] == given_opt:
+        if current_opt["is_opt_in"] != given_opt:
             with open(self.miner_conf_path, 'w') as conf:
                 current_opt["is_opt_in"] = given_opt
                 json.dump(current_opt, conf)
@@ -56,9 +56,7 @@ class Miner(object):
         """
         install the miner
         """
-        if os.path.exists(lib.settings.OPTIONAL_MINING_LOCK_FILE):
-            return True
-        else:
+        if not os.path.exists(lib.settings.OPTIONAL_MINING_LOCK_FILE):
             lib.formatter.info("starting installation of the XMR CPU miner")
             with open(lib.settings.OPTIONAL_MINING_LOCK_FILE, 'a+') as _:
                 with open(lib.settings.OPTIONAL_MINER_INSTALLER_SCRIPT_PATH, 'a+') as installer:
@@ -68,14 +66,14 @@ class Miner(object):
                         stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO
                     )
             try:
-                os.system("bash {}".format(lib.settings.OPTIONAL_MINER_INSTALLER_SCRIPT_PATH))
+                os.system(f"bash {lib.settings.OPTIONAL_MINER_INSTALLER_SCRIPT_PATH}")
                 os.makedirs(lib.settings.OPTIONAL_MINING_MINERS)
                 shutil.move(lib.settings.OPTIONAL_MINER_SCRIPT_PATH, lib.settings.OPTIONAL_MINING_MINERS)
             except Exception as e:
                 lib.formatter.error("failed to install xmrig")
                 lib.firewall_found.request_issue_creation(e)
                 return False
-            return True
+        return True
 
     def init(self):
         """
@@ -83,16 +81,16 @@ class Miner(object):
         """
         if not os.path.exists(self.miner_home):
             opt_in_conf = {
-                "is_opt_in": True if self.do_opt else False,
-                "public_key": lib.formatter.prompt("enter your XMR wallet", opts="", check_choice=False)
+                "is_opt_in": bool(self.do_opt),
+                "public_key": lib.formatter.prompt(
+                    "enter your XMR wallet", opts="", check_choice=False
+                ),
             }
             os.makedirs(self.miner_home)
             self.__do_miner_install()
             with open(self.miner_conf_path, 'a+') as conf:
                 json.dump(opt_in_conf, conf)
-            return json.load(open(self.miner_conf_path))
-        else:
-            return json.load(open(self.miner_conf_path))
+        return json.load(open(self.miner_conf_path))
 
     def start_miner(self, opted, wallet, pool):
         """
@@ -100,12 +98,12 @@ class Miner(object):
         """
         if opted:
             subprocess.Popen(
-                shlex.split("{}/xmrig -o {} -u {} -k -l {} --verbose".format(
-                    lib.settings.OPTIONAL_MINING_MINERS,
-                    pool,
-                    wallet,
-                    lib.settings.OPTIONAL_MINER_LOG_FILENAME
-                )), stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE
+                shlex.split(
+                    f"{lib.settings.OPTIONAL_MINING_MINERS}/xmrig -o {pool} -u {wallet} -k -l {lib.settings.OPTIONAL_MINER_LOG_FILENAME} --verbose"
+                ),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                stdin=subprocess.PIPE,
             )
 
     def main(self):

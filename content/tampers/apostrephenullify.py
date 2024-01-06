@@ -5,10 +5,4 @@ __type__ = "hiding the apostrophe by passing it with a NULL character"
 def tamper(payload, **kwargs):
     payload = str(payload)
     identifier = "'"
-    retval = ""
-    for char in payload:
-        if char == identifier:
-            retval += "%00%27"
-        else:
-            retval += char
-    return retval
+    return "".join("%00%27" if char == identifier else char for char in payload)

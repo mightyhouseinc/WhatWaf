@@ -19,10 +19,7 @@ class StoreDictKeyPairs(Action):
     def __call__(self, parser, namespace, values, option_string=None):
         # discover what we split by
         for kv in values.split(","):
-            if ":" in kv:
-                splitter = ":"
-            else:
-                splitter = "="
+            splitter = ":" if ":" in kv else "="
             if kv.count(splitter) != 1:
                 first_equal_index = kv.index(splitter)
                 key = kv[:first_equal_index].strip()
@@ -73,10 +70,12 @@ class WhatWafParser(ArgumentParser):
                                              "arguments that will control your requests")
         req_args.add_argument("--pa", dest="usePersonalAgent", metavar="USER-AGENT",
                               help="Provide your own personal agent to use it for the HTTP requests")
-        req_args.add_argument("--ra", dest="useRandomAgent", action="store_true",
-                              help="Use a random user-agent for the HTTP requests (*default={})".format(
-                                  lib.settings.DEFAULT_USER_AGENT)
-                              )
+        req_args.add_argument(
+            "--ra",
+            dest="useRandomAgent",
+            action="store_true",
+            help=f"Use a random user-agent for the HTTP requests (*default={lib.settings.DEFAULT_USER_AGENT})",
+        )
         req_args.add_argument("-H", "--headers", dest="extraHeaders", action=StoreDictKeyPairs,
                               metavar="HEADER=VALUE,HEADER:VALUE..",
                               help="Add your own custom headers to the request. To use multiple "
@@ -213,6 +212,4 @@ class WhatWafParser(ArgumentParser):
         hidden.add_argument("--i-am-teapot", action="store_true", dest="iAmTeapot", default=False, help=SUPPRESS)
         hidden.add_argument("--skip-update", action="store_true", dest="skipAutoUpdate", default=False, help=SUPPRESS)
 
-        opts = parser.parse_args()
-
-        return opts
+        return parser.parse_args()

@@ -20,7 +20,7 @@ def detect(content, **kwargs):
         possible_headers = ("X-Varnish", "X-Cachewall-Action", "X-Cachewall-Reason")
         if headers.get(HTTP_HEADER.SERVER, "") == "Varnish":
             return True
-        if any([h in k for k in headers.keys() for h in possible_headers]):
+        if any(h in k for k in headers.keys() for h in possible_headers):
             return True
 
         for detection in detection_schema:

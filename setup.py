@@ -35,25 +35,19 @@ try:
         install_requires=open("requirements.txt").read().split("\n")
     )
     if needs_username_fix:
-        if "root" == username:
+        if username == "root":
             # fixes weird docker issues
             path = "/root/.whatwaf"
         else:
-            path = "/home/{}/.whatwaf".format(os.path.expanduser(username))
+            path = f"/home/{os.path.expanduser(username)}/.whatwaf"
         subprocess.call(["chown", "-R", "{u}:{u}".format(u=username), path])
 except Exception as e:
     import sys, traceback
 
     sep = "-" * 30
     fatal(
-        "WhatWaf has caught an unhandled exception with the error message: '{}'.".format(str(e))
+        f"WhatWaf has caught an unhandled exception with the error message: '{str(e)}'."
     )
-    exception_data = "Traceback (most recent call):\n{}{}".format(
-        "".join(traceback.format_tb(sys.exc_info()[2])), str(e)
-    )
-    error(
-        "\n{}\n{}\n{}".format(
-            sep, exception_data, sep
-        )
-    )
+    exception_data = f'Traceback (most recent call):\n{"".join(traceback.format_tb(sys.exc_info()[2]))}{str(e)}'
+    error(f"\n{sep}\n{exception_data}\n{sep}")
     request_issue_creation(exception_data)
