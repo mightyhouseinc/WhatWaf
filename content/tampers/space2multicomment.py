@@ -18,7 +18,6 @@ def tamper(payload, **kwargs):
         elif num == 2:
             if char == " ":
                 retval += modifiers[1]
-        else:
-            if char == " ":
-                retval += modifiers[2]
+        elif char == " ":
+            retval += modifiers[2]
     return retval

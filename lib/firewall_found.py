@@ -65,8 +65,8 @@ def find_url(params):
         "https://github.com/Ekultek/WhatWaf/issues",
         "https://github.com/Ekultek/WhatWaf/issues?q=is%3Aissue+is%3Aclosed"
     )
+    retval = "https://github.com{}"
     for search in searches:
-        retval = "https://github.com{}"
         href = None
         searcher = re.compile(params, re.I)
         req = requests.get(search)
@@ -95,7 +95,7 @@ def hide_sensitive(args, command):
         args.insert(url_index, hidden_url)
         return ' '.join(args)
     except:
-        return ' '.join([item for item in sys.argv])
+        return ' '.join(list(sys.argv))
 
 
 def request_issue_creation(exception_details):
@@ -120,18 +120,12 @@ def request_issue_creation(exception_details):
         for item in sys.argv:
             if item in lib.settings.SENSITIVE_ARGUMENTS:
                 argv_data = hide_sensitive(sys.argv, item)
-        title = "Whatwaf Unhandled Exception ({})".format(identifier)
+        title = f"Whatwaf Unhandled Exception ({identifier})"
 
-        python_version = "{}.{}{}".format(sys.version_info.major, sys.version_info.minor, sys.version_info.micro)
+        python_version = f"{sys.version_info.major}.{sys.version_info.minor}{sys.version_info.micro}"
         issue_creation_template = {
             "title": title,
-            "body": "Whatwaf version: `{}`\n"
-                    "Running context: `{}`\n"
-                    "Python version: `{}`\n"
-                    "Traceback: \n```\n{}\n```\n"
-                    "Running platform: `{}`".format(
-                lib.settings.VERSION, argv_data, python_version, exception_details, platform.platform()
-            )
+            "body": f"Whatwaf version: `{lib.settings.VERSION}`\nRunning context: `{argv_data}`\nPython version: `{python_version}`\nTraceback: \n```\n{exception_details}\n```\nRunning platform: `{platform.platform()}`",
         }
 
         issue_creation_json = json.dumps(issue_creation_template)
@@ -139,28 +133,25 @@ def request_issue_creation(exception_details):
             issue_creation_json = issue_creation_json.encode("utf-8")
         if not ensure_no_issue(identifier):
             req = Request(
-                url="https://api.github.com/repos/ekultek/whatwaf/issues", data=issue_creation_json,
-                headers={"Authorization": "token {}".format(get_token(lib.settings.TOKEN_PATH))}
+                url="https://api.github.com/repos/ekultek/whatwaf/issues",
+                data=issue_creation_json,
+                headers={
+                    "Authorization": f"token {get_token(lib.settings.TOKEN_PATH)}"
+                },
             )
             try:
                 urlopen(req, timeout=10).read()
                 lib.formatter.info(
-                    "this exception has been submitted successfully with the title '{}', URL: '{}'".format(
-                        title, find_url(identifier)
-                    )
+                    f"this exception has been submitted successfully with the title '{title}', URL: '{find_url(identifier)}'"
                 )
             except Exception as e:
                 unprocessed_file_path = lib.settings.save_temp_issue(issue_creation_template)
                 lib.formatter.fatal(
-                    "caught an exception while trying to process request: {}, you can either create "
-                    "this issue manually, or try again. if you have decided to create the issue "
-                    "manually you can find the issue information in the following file: {}".format(
-                        str(e), unprocessed_file_path
-                    )
+                    f"caught an exception while trying to process request: {str(e)}, you can either create this issue manually, or try again. if you have decided to create the issue manually you can find the issue information in the following file: {unprocessed_file_path}"
                 )
         else:
             lib.formatter.error(
-                "this exception has already been reported: '{}'".format(find_url(identifier))
+                f"this exception has already been reported: '{find_url(identifier)}'"
             )
 
 
@@ -187,7 +178,7 @@ def request_firewall_issue_creation(path):
             # gotta seek to the beginning of the file since it's already been read `4096` into it
             data.seek(0)
             full_fingerprint = data.read()
-            issue_title = "Unknown Firewall ({})".format(identifier)
+            issue_title = f"Unknown Firewall ({identifier})"
 
         for item in sys.argv:
             if item in lib.settings.SENSITIVE_ARGUMENTS:
@@ -195,11 +186,7 @@ def request_firewall_issue_creation(path):
 
         issue_data = {
             "title": issue_title,
-            "body": "WhatWaf version: `{}`\n"
-                    "Running context: `{}`\n"
-                    "Fingerprint:\n```\n{}\n```".format(
-                        lib.settings.VERSION, data, full_fingerprint
-            )
+            "body": f"WhatWaf version: `{lib.settings.VERSION}`\nRunning context: `{data}`\nFingerprint:\n```\n{full_fingerprint}\n```",
         }
 
         _json_data = json.dumps(issue_data)
@@ -208,28 +195,26 @@ def request_firewall_issue_creation(path):
 
         if not ensure_no_issue(identifier):
             req = Request(
-                url="https://api.github.com/repos/ekultek/whatwaf/issues", data=_json_data,
-                headers={"Authorization": "token {}".format(get_token(lib.settings.TOKEN_PATH))}
+                url="https://api.github.com/repos/ekultek/whatwaf/issues",
+                data=_json_data,
+                headers={
+                    "Authorization": f"token {get_token(lib.settings.TOKEN_PATH)}"
+                },
             )
             try:
                 urlopen(req, timeout=10).read()
                 lib.formatter.info(
-                    "this firewalls fingerprint has successfully been submitted with the title '{}', "
-                    "URL '{}'".format(
-                        issue_title, find_url(identifier)
-                    )
+                    f"this firewalls fingerprint has successfully been submitted with the title '{issue_title}', URL '{find_url(identifier)}'"
                 )
             except Exception as e:
                 unprocessed_file_path = lib.settings.save_temp_issue(issue_data)
                 lib.formatter.fatal(
-                    "caught an exception while trying to process request: {}, you can either create "
-                    "this issue manually, or try again. if you have decided to create the issue "
-                    "manually you can find the issue information in the following file: {}".format(
-                        str(e), unprocessed_file_path
-                    )
+                    f"caught an exception while trying to process request: {str(e)}, you can either create this issue manually, or try again. if you have decided to create the issue manually you can find the issue information in the following file: {unprocessed_file_path}"
                 )
         else:
             lib.formatter.error(
-                "someone has already sent in this firewalls fingerprint here: {}".format(find_url(identifier))
+                f"someone has already sent in this firewalls fingerprint here: {find_url(identifier)}"
             )
-    lib.formatter.info("for further analysis the WAF fingerprint can be found in: '{}'".format(path))
+    lib.formatter.info(
+        f"for further analysis the WAF fingerprint can be found in: '{path}'"
+    )

@@ -4,10 +4,4 @@ __type__ = "changing the spaces in the payload into double dashes"
 
 def tamper(payload, **kwargs):
     modifier = "--"
-    retval = ""
-    for char in payload:
-        if char == " ":
-            retval += modifier
-        else:
-            retval += char
-    return retval
+    return "".join(modifier if char == " " else char for char in payload)

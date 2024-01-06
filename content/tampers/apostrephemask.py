@@ -5,10 +5,4 @@ __type__ = "hiding an apostrophe by its UTF equivalent"
 def tamper(payload, **kwargs):
     payload = str(payload)
     identifier = "'"
-    retval = ""
-    for char in payload:
-        if char == identifier:
-            retval += "%EF%BC%87"
-        else:
-            retval += char
-    return retval
+    return "".join("%EF%BC%87" if char == identifier else char for char in payload)

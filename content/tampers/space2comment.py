@@ -4,10 +4,4 @@ __type__ = "changing the spaces in the payload into a comment"
 
 def tamper(payload, **kwargs):
     payload = str(payload)
-    retval = ""
-    for char in payload:
-        if char == " ":
-            retval += "/**/"
-        else:
-            retval += char
-    return retval
+    return "".join("/**/" if char == " " else char for char in payload)

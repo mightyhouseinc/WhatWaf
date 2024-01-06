@@ -5,10 +5,5 @@ __type__ = "obfuscating payload by passing it between comments with obfuscation 
 def tamper(payload, **kwargs):
     modifier = "/**/"
     secondary_modifier = "/*!00000{}*/"
-    retval = ""
-    for char in payload:
-        if char == " ":
-            retval += modifier
-        else:
-            retval += char
+    retval = "".join(modifier if char == " " else char for char in payload)
     return secondary_modifier.format(retval)

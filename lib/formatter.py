@@ -28,56 +28,54 @@ def set_color(string, level=None):
 
 def info(string):
     print(
-        "\033[38m[{}]\033[0m".format(time.strftime("%H:%M:%S")) + set_color("[INFO] {}".format(string), level=20)
+        f'\033[38m[{time.strftime("%H:%M:%S")}]\033[0m{set_color(f"[INFO] {string}", level=20)}'
     )
 
 
 def debug(string):
     print(
-            "\033[38m[{}]\033[0m".format(time.strftime("%H:%M:%S")) + set_color("[DEBUG] {}".format(string), level=10)
+        f'\033[38m[{time.strftime("%H:%M:%S")}]\033[0m{set_color(f"[DEBUG] {string}", level=10)}'
     )
 
 
 def warn(string, minor=False):
     if not minor:
         print(
-                "\033[38m[{}]\033[0m".format(time.strftime("%H:%M:%S")) + set_color("[WARN] {}".format(string), level=30)
+            f'\033[38m[{time.strftime("%H:%M:%S")}]\033[0m{set_color(f"[WARN] {string}", level=30)}'
         )
     else:
         print(
-                "\033[38m[{}]\033[0m".format(time.strftime("%H:%M:%S")) + set_color("[WARN] {}".format(string), level=35)
+            f'\033[38m[{time.strftime("%H:%M:%S")}]\033[0m{set_color(f"[WARN] {string}", level=35)}'
         )
 
 
 def error(string):
     print(
-            "\033[38m[{}]\033[0m".format(time.strftime("%H:%M:%S")) + set_color("[ERROR] {}".format(string), level=40)
+        f'\033[38m[{time.strftime("%H:%M:%S")}]\033[0m{set_color(f"[ERROR] {string}", level=40)}'
     )
 
 
 def fatal(string):
     print(
-            "\033[38m[{}]\033[0m".format(time.strftime("%H:%M:%S")) + set_color("[FATAL] {}".format(string), level=60)
+        f'\033[38m[{time.strftime("%H:%M:%S")}]\033[0m{set_color(f"[FATAL] {string}", level=60)}'
     )
 
 
 def payload(string):
-    print(
-        set_color("[PAYLOAD] {}".format(string), level=50)
-    )
+    print(set_color(f"[PAYLOAD] {string}", level=50))
 
 
 def success(string):
     print(
-            "\033[38m[{}]\033[0m".format(time.strftime("%H:%M:%S")) + set_color("[SUCCESS] {}".format(string), level=15)
+        f'\033[38m[{time.strftime("%H:%M:%S")}]\033[0m{set_color(f"[SUCCESS] {string}", level=15)}'
     )
 
 
 def prompt(string, opts, default="n", check_choice=True):
     opts = list(opts)
-    choice = raw_input("\033[38m[{}]\033[0m[PROMPT] {}[{}]: ".format(
-        time.strftime("%H:%M:%S"), string, "/".join(opts) if len(opts) != 0 else ""
-    ))
+    choice = raw_input(
+        f'\033[38m[{time.strftime("%H:%M:%S")}]\033[0m[PROMPT] {string}[{"/".join(opts) if opts else ""}]: '
+    )
     if check_choice:
         if choice not in [o.lower() for o in opts]:
             choice = default
@@ -86,5 +84,5 @@ def prompt(string, opts, default="n", check_choice=True):
 
 def discover(string):
     print(
-        "\033[38m[{}]\033[0m".format(time.strftime("%H:%M:%S")) + set_color("[FIREWALL] {}".format(string), level=45)
+        f'\033[38m[{time.strftime("%H:%M:%S")}]\033[0m{set_color(f"[FIREWALL] {string}", level=45)}'
     )

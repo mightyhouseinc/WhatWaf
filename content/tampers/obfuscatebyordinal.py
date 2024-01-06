@@ -4,11 +4,8 @@ __type__ = "changing certain characters in the payload into their ordinal equiva
 
 def tamper(payload, **kwargs):
     payload = str(payload)
-    retval = ""
     danger_characters = "%&<>/\\;'\""
-    for char in payload:
-        if char in danger_characters:
-            retval += "%{}".format(ord(char))
-        else:
-            retval += char
-    return retval
+    return "".join(
+        f"%{ord(char)}" if char in danger_characters else char
+        for char in payload
+    )

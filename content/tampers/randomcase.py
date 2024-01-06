@@ -8,10 +8,7 @@ __type__ = "changing the character case of the payload randomly with either uppe
 def tamper(payload, **kwargs):
     payload = str(payload)
     identifier = (1, 2)
-    retval = ""
-    for char in payload:
-        if random.choice(identifier) == 1:
-            retval += char.upper()
-        else:
-            retval += char.lower()
-    return retval
+    return "".join(
+        char.upper() if random.choice(identifier) == 1 else char.lower()
+        for char in payload
+    )

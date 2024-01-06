@@ -12,7 +12,7 @@ def detect(content, **kwargs):
         re.compile(r"our.systems.have.detected.unusual.traffic", re.I),
         re.compile(r"block(ed)?.by.g.cloud.security.policy.+", re.I)
     )
-    if status == 400 or status == 429 or status == 500:
+    if status in [400, 429, 500]:
         for detection in detection_schema:
             if detection.search(content) is not None:
                 return True

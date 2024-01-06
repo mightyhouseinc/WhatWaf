@@ -8,12 +8,9 @@ __type__ = "enclosing brackets and masking an apostrophe around the character in
 def tamper(payload, **kwargs):
     payload = str(payload)
     to_enclose = string.digits
-    if not any(i in payload for i in to_enclose):
+    if all(i not in payload for i in to_enclose):
         return payload
-    retval = ""
-    for char in payload:
-        if char in to_enclose:
-            retval += "[%EF%BC%87{}%EF%BC%87]".format(char)
-        else:
-            retval += char
-    return retval
+    return "".join(
+        f"[%EF%BC%87{char}%EF%BC%87]" if char in to_enclose else char
+        for char in payload
+    )

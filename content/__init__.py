@@ -39,19 +39,29 @@ class ScriptQueue(object):
         retval = []
         if self.is_tamper:
             file_list = lib.settings.shuffle_list(
-                [f for f in os.listdir(self.files) if not any(s in f for s in self.skip_schema)]
+                [
+                    f
+                    for f in os.listdir(self.files)
+                    if all(s not in f for s in self.skip_schema)
+                ]
             )
         else:
-            file_list = [f for f in os.listdir(self.files) if not any(s in f for s in self.skip_schema)]
+            file_list = [
+                f
+                for f in os.listdir(self.files)
+                if all(s not in f for s in self.skip_schema)
+            ]
         for script in file_list:
             script = script[:-3]
             if self.verbose:
-                lib.formatter.debug("loading {} script '{}'".format(self.script_type, script))
+                lib.formatter.debug(f"loading {self.script_type} script '{script}'")
             try:
                 script = importlib.import_module(self.path.format(script))
                 retval.append(script)
             except Exception:
-                lib.formatter.warn("failed to load tamper '{}', pretending it doesn't exist".format(script))
+                lib.formatter.warn(
+                    f"failed to load tamper '{script}', pretending it doesn't exist"
+                )
         return retval
 
 
@@ -84,20 +94,18 @@ class DetectionQueue(object):
         strip_url = lambda x: (x.split("/")[0], x.split("/")[2])
         for i, waf_vector in enumerate(self.payloads):
             if not self.placement:
-                primary_url = self.url + "{}".format(waf_vector)
+                primary_url = f"{self.url}{waf_vector}"
             else:
                 url = self.url.split("*")
-                primary_url = "{}{}{}".format(url[0], waf_vector, url[len(url) - 1])
+                primary_url = f"{url[0]}{waf_vector}{url[len(url) - 1]}"
             secondary_url = strip_url(self.url)
-            secondary_url = "{}//{}".format(secondary_url[0], secondary_url[1])
-            secondary_url = "{}/{}".format(secondary_url, random.choice(lib.settings.RAND_HOMEPAGES))
+            secondary_url = f"{secondary_url[0]}//{secondary_url[1]}"
+            secondary_url = f"{secondary_url}/{random.choice(lib.settings.RAND_HOMEPAGES)}"
             if self.verbose:
                 lib.formatter.payload(waf_vector.strip())
             try:
                 if self.verbose:
-                    lib.formatter.debug(
-                        "trying: '{}'".format(primary_url)
-                    )
+                    lib.formatter.debug(f"trying: '{primary_url}'")
                 response_retval.append((
                     lib.settings.get_page(
                         primary_url, agent=self.agent, proxy=self.proxy, provided_headers=self.provided_headers,
@@ -106,9 +114,7 @@ class DetectionQueue(object):
                     )
                 ))
                 if self.verbose:
-                    lib.formatter.debug(
-                        "trying: {}".format(secondary_url)
-                    )
+                    lib.formatter.debug(f"trying: {secondary_url}")
                 response_retval.append((
                     lib.settings.get_page(
                         secondary_url, agent=self.agent, proxy=self.proxy, provided_headers=self.provided_headers,
@@ -121,14 +127,11 @@ class DetectionQueue(object):
                     lib.formatter.warn(
                         "possible network level firewall detected (hardware), received an aborted connection"
                     )
-                    response_retval.append(None)
                 else:
                     lib.formatter.error(
-                        "failed to obtain target meta-data with payload {}, error: '{}'".format(
-                            waf_vector.strip(), str(e)
-                        )
+                        f"failed to obtain target meta-data with payload {waf_vector.strip()}, error: '{str(e)}'"
                     )
-                    response_retval.append(None)
+                response_retval.append(None)
             if self.save_fingerprint:
                 lib.settings.create_fingerprint(
                     self.url,
@@ -151,9 +154,7 @@ class DetectionQueue(object):
     def threaded_get_response_helper(self, url_thread, waf_vector):
         try:
             if self.verbose:
-                lib.formatter.debug(
-                    "trying: '{}'".format(url_thread)
-                )
+                lib.formatter.debug(f"trying: '{url_thread}'")
             self.response_retval.append((
                 lib.settings.get_page(
                     url_thread, agent=self.agent, proxy=self.proxy, provided_headers=self.provided_headers,
@@ -170,9 +171,7 @@ class DetectionQueue(object):
                 self.response_retval.append(None)
             else:
                 lib.formatter.error(
-                    "failed to obtain target meta-data with payload {}, error: '{}'".format(
-                        waf_vector.strip(), str(e)
-                    )
+                    f"failed to obtain target meta-data with payload {waf_vector.strip()}, error: '{str(e)}'"
                 )
                 self.response_retval.append(None)
 
@@ -194,20 +193,20 @@ class DetectionQueue(object):
 
         for i, waf_vector in enumerate(self.payloads):
             if not self.placement:
-                primary_url = self.url + "{}".format(waf_vector)
+                primary_url = f"{self.url}{waf_vector}"
             else:
                 url = self.url.split("*")
-                primary_url = "{}{}{}".format(url[0], waf_vector, url[len(url) - 1])
+                primary_url = f"{url[0]}{waf_vector}{url[len(url) - 1]}"
             secondary_url = strip_url(self.url)
-            secondary_url = "{}//{}".format(secondary_url[0], secondary_url[1])
-            secondary_url = "{}/{}".format(secondary_url, random.choice(lib.settings.RAND_HOMEPAGES))
+            secondary_url = f"{secondary_url[0]}//{secondary_url[1]}"
+            secondary_url = f"{secondary_url}/{random.choice(lib.settings.RAND_HOMEPAGES)}"
             if self.verbose:
                 lib.formatter.payload(waf_vector.strip())
 
             self.threading_queue.put((primary_url, waf_vector))
             self.threading_queue.put((secondary_url, waf_vector))
 
-        for i in range(self.threads):
+        for _ in range(self.threads):
             t = threading.Thread(target=self.threader)
             t.daemon = True
             t.start()
@@ -229,10 +228,10 @@ def find_failures(html, regs):
     """
     find failures in the response content
     """
-    for reg in regs:
-        if reg.search(html) is not None or html == "" or html is None:
-            return True
-    return False
+    return any(
+        reg.search(html) is not None or html == "" or html is None
+        for reg in regs
+    )
 
 
 def get_working_tampers(url, norm_response, payloads, **kwargs):
@@ -280,7 +279,9 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
         load = tamper
         if verbose:
             try:
-                lib.formatter.debug("currently tampering with script '{}".format(str(load).split(" ")[1].split(".")[-1]))
+                lib.formatter.debug(
+                    f"""currently tampering with script '{str(load).split(" ")[1].split(".")[-1]}"""
+                )
             except:
                 pass
         for vector in payloads:
@@ -288,17 +289,17 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
                 vector = tamper.tamper(vector)
                 if verbose:
                     lib.formatter.payload(vector.strip())
-                payloaded_url = "{}{}".format(url, vector)
+                payloaded_url = f"{url}{vector}"
                 _, status, html, _ = lib.settings.get_page(
                     payloaded_url, agent=agent, proxy=proxy, verbose=verbose, provided_headers=provided_headers,
                     throttle=throttle, timeout=req_timeout
                 )
                 if not find_failures(str(html), failed_schema):
                     if verbose:
-                        if status != 0:
-                            lib.formatter.debug("response code: {}".format(status))
-                        else:
+                        if status == 0:
                             lib.formatter.debug("unknown response detected")
+                        else:
+                            lib.formatter.debug(f"response code: {status}")
                     if status != 404:
                         if status == 200:
                             try:
@@ -307,24 +308,17 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
                                     good_tamper_paths.append(load)
                             except:
                                 pass
-                else:
-                    if verbose:
-                        lib.formatter.warn("failure found in response content")
+                elif verbose:
+                    lib.formatter.warn("failure found in response content")
                 if len(working_tampers) == max_successful_payloads:
                     break
-            # simple sloppy little fix for issue #376, we'll just continue if we hit the problem
-            # i honestly have no idea if this will cause future issues or not
             except RuntimeError:
                 pass
             except Exception as e:
-                if "'NoneType' object is not iterable" in str(e):
-                    pass
-                elif "Failed to parse: " in str(e):
-                    # patches issue #1281
-                    # fixes issue #1567
-                    pass
-                else:
-                    raise e.__class__("Exception caught: {} ~~> {}".format(e.__class__, e.message))
+                if "'NoneType' object is not iterable" not in str(
+                    e
+                ) and "Failed to parse: " not in str(e):
+                    raise e.__class__(f"Exception caught: {e.__class__} ~~> {e.message}")
         if len(working_tampers) == max_successful_payloads:
             break
     return working_tampers
@@ -352,13 +346,7 @@ def check_if_matched(normal_resp, payload_resp, step=1, verified=5):
         matched += step
     else:
         response.add("response status code differs when a payload is provided")
-    if len(response) != 0:
-        if matched <= verified:
-            return response
-        else:
-            return None
-    else:
-        return None
+    return response if response and matched <= verified else None
 
 
 def dictify_output(url, firewalls, tampers):
@@ -369,7 +357,7 @@ def dictify_output(url, firewalls, tampers):
     lib.formatter.info("formatting output")
     retval = {"url": url}
     if isinstance(firewalls, list):
-        retval["identified firewall"] = [item for item in firewalls]
+        retval["identified firewall"] = list(firewalls)
         retval["is protected"] = True
     elif isinstance(firewalls, str):
         retval["identified firewall"] = firewalls
@@ -388,7 +376,7 @@ def dictify_output(url, firewalls, tampers):
         retval["apparent working tampers"] = None
 
     jsonified = json.dumps(retval, indent=4, sort_keys=True)
-    print("{}\n{}\n{}".format(data_sep, jsonified, data_sep))
+    print(f"{data_sep}\n{jsonified}\n{data_sep}")
     return jsonified
 
 

@@ -10,8 +10,5 @@ def tamper(payload, **kwargs):
     retval = ""
     for char in payload:
         modifier = random.choice(blanks)
-        if char == " ":
-            retval += modifier
-        else:
-            retval += char
+        retval += modifier if char == " " else char
     return retval

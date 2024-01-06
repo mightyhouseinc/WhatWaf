@@ -7,9 +7,9 @@ def tamper(payload, **kwargs):
     retval = ""
     for char in payload:
         if char == "'":
-            retval += "{}'".format(modifier)
+            retval += f"{modifier}'"
         elif char == '"':
-            retval += '{}"'.format(modifier)
+            retval += f'{modifier}"'
         else:
             retval += char
     return retval

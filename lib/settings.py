@@ -35,7 +35,9 @@ VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
 
 # the saying that will go inside of the banner
 SAYING = "/><script>alert();</script>"
-INSIDE_SAYING = '"\033[94mWhatWaf?\033[0m\033[1m<|>v{}{}\033[1m"'.format(VERSION, VERSION_TYPE)
+INSIDE_SAYING = (
+    f'"\033[94mWhatWaf?\033[0m\033[1m<|>v{VERSION}{VERSION_TYPE}\033[1m"'
+)
 
 # cool looking banner
 BANNER = """\b\033[1m
@@ -73,48 +75,48 @@ URL_QUERY_REGEX = re.compile(r"(.*)[?|#](.*){1}\=(.*)")
 CUR_DIR = os.getcwd()
 
 # path to our home directory
-HOME = "{}/.whatwaf".format(os.path.expanduser("~"))
+HOME = f'{os.path.expanduser("~")}/.whatwaf'
 
 # plugins (waf scripts) path
 try:
-    PLUGINS_DIRECTORY = "{}/content/plugins".format(CUR_DIR)
+    PLUGINS_DIRECTORY = f"{CUR_DIR}/content/plugins"
     os.listdir(PLUGINS_DIRECTORY)
 except OSError:
-    PLUGINS_DIRECTORY = "{}/plugins".format(HOME)
+    PLUGINS_DIRECTORY = f"{HOME}/plugins"
 
 # tampers (tamper scripts) path
 try:
-    TAMPERS_DIRECTORY = "{}/content/tampers".format(CUR_DIR)
+    TAMPERS_DIRECTORY = f"{CUR_DIR}/content/tampers"
     os.listdir(TAMPERS_DIRECTORY)
 except OSError:
-    TAMPERS_DIRECTORY = "{}/tampers".format(HOME)
+    TAMPERS_DIRECTORY = f"{HOME}/tampers"
 
 # name provided to unknown firewalls
 UNKNOWN_FIREWALL_NAME = "Unknown Firewall"
 
 # fingerprint path for unknown firewalls
-UNKNOWN_PROTECTION_FINGERPRINT_PATH = "{}/fingerprints".format(HOME)
+UNKNOWN_PROTECTION_FINGERPRINT_PATH = f"{HOME}/fingerprints"
 
 # JSON data file path
-JSON_FILE_PATH = "{}/json_output".format(HOME)
+JSON_FILE_PATH = f"{HOME}/json_output"
 
 # YAML data file path
-YAML_FILE_PATH = "{}/yaml_output".format(HOME)
+YAML_FILE_PATH = f"{HOME}/yaml_output"
 
 # CSV data file path
-CSV_FILE_PATH = "{}/csv_output".format(HOME)
+CSV_FILE_PATH = f"{HOME}/csv_output"
 
 # path to the mining home (must opt in first)
-OPTIONAL_MINING_FOLDER_PATH = "{}/mining".format(HOME)
+OPTIONAL_MINING_FOLDER_PATH = f"{HOME}/mining"
 
 # path to the mining data
-OPTIONAL_MINING_CONFIG_PATH = "{}/mine.json".format(OPTIONAL_MINING_FOLDER_PATH)
+OPTIONAL_MINING_CONFIG_PATH = f"{OPTIONAL_MINING_FOLDER_PATH}/mine.json"
 
 # where the miners sit (we'll mine using CPU only)
-OPTIONAL_MINING_MINERS = "{}/miner".format(OPTIONAL_MINING_FOLDER_PATH)
+OPTIONAL_MINING_MINERS = f"{OPTIONAL_MINING_FOLDER_PATH}/miner"
 
 # the file that will tell us if the miner is installed or not
-OPTIONAL_MINING_LOCK_FILE = "{}/.lock".format(OPTIONAL_MINING_FOLDER_PATH)
+OPTIONAL_MINING_LOCK_FILE = f"{OPTIONAL_MINING_FOLDER_PATH}/.lock"
 
 # whatwafs XMR wallets
 OPTIONAL_MINING_WHATWAF_WALLETS = (
@@ -130,11 +132,15 @@ OPTIONS_MINING_POOLS = (
     "vegas-backup.xmrpool.net:3335"
 )
 
-OPTIONAL_MINER_INSTALLER_SCRIPT_PATH = "{}/install.sh".format(OPTIONAL_MINING_FOLDER_PATH)
+OPTIONAL_MINER_INSTALLER_SCRIPT_PATH = (
+    f"{OPTIONAL_MINING_FOLDER_PATH}/install.sh"
+)
 
 OPTIONAL_MINER_SCRIPT_PATH = "/tmp/xmrig/build/xmrig"
 
-OPTIONAL_MINER_LOG_FILENAME = "{}/{}.log".format(OPTIONAL_MINING_MINERS, str(time.time()))
+OPTIONAL_MINER_LOG_FILENAME = (
+    f"{OPTIONAL_MINING_MINERS}/{str(time.time())}.log"
+)
 
 OPTIONAL_MINER_INSTALLER_SCRIPT = """#!/bin/bash
 
@@ -211,39 +217,37 @@ function main () {
 main;"""
 
 # for when an issue occurs but is not processed due to an error
-UNPROCESSED_ISSUES_PATH = "{}/unprocessed_issues".format(HOME)
+UNPROCESSED_ISSUES_PATH = f"{HOME}/unprocessed_issues"
 
 # request token path
 try:
-    TOKEN_PATH = "{}/content/files/auth.key".format(CUR_DIR)
+    TOKEN_PATH = f"{CUR_DIR}/content/files/auth.key"
     open(TOKEN_PATH).close()
 except IOError:
-    TOKEN_PATH = "{}/files/auth.key".format(HOME)
+    TOKEN_PATH = f"{HOME}/files/auth.key"
 
 # known POST strings (I'll probably think of more later)
 try:
-    POST_STRING_NAMES_PATH = "{}/content/files/post_strings.lst".format(CUR_DIR)
+    POST_STRING_NAMES_PATH = f"{CUR_DIR}/content/files/post_strings.lst"
     open(POST_STRING_NAMES_PATH).close()
 except IOError:
-    POST_STRING_NAMES_PATH = "{}/files/post_strings.lst".format(HOME)
+    POST_STRING_NAMES_PATH = f"{HOME}/files/post_strings.lst"
 
 # path to the database file
-DATABASE_FILENAME = "{}/whatwaf.sqlite".format(HOME)
+DATABASE_FILENAME = f"{HOME}/whatwaf.sqlite"
 
 # payloads that have been exported from database cache
-EXPORTED_PAYLOADS_PATH = "{}/payload_exports".format(HOME)
+EXPORTED_PAYLOADS_PATH = f"{HOME}/payload_exports"
 
 # default payloads path
 try:
-    DEFAULT_PAYLOAD_PATH = "{}/content/files/default_payloads.lst".format(CUR_DIR)
+    DEFAULT_PAYLOAD_PATH = f"{CUR_DIR}/content/files/default_payloads.lst"
     open(DEFAULT_PAYLOAD_PATH).close()
 except IOError:
-    DEFAULT_PAYLOAD_PATH = "{}/files/default_payloads.lst".format(HOME)
+    DEFAULT_PAYLOAD_PATH = f"{HOME}/files/default_payloads.lst"
 
 # default user-agent
-DEFAULT_USER_AGENT = "whatwaf/{} (Language={}; Platform={})".format(
-    VERSION, sys.version.split(" ")[0], platform.platform().split("-")[0]
-)
+DEFAULT_USER_AGENT = f'whatwaf/{VERSION} (Language={sys.version.split(" ")[0]}; Platform={platform.platform().split("-")[0]})'
 
 # arguments that need to be blocked from issue creations and waf creations
 SENSITIVE_ARGUMENTS = ("--proxy", "-u", "--url", "-D", "--data", "--pa", "-b", "--burp")
@@ -281,8 +285,6 @@ URL_VALIDATION = re.compile(
 
 
 class InvalidURLProvided(Exception): pass
-
-
 class HTTP_HEADER:
     """
     HTTP request headers list, putting it in a class because
@@ -347,7 +349,7 @@ def get_query(url):
     get the query parameter out of a URL
     """
     data = urlparse.urlparse(url)
-    query = "{}?{}".format(data.path, data.query)
+    query = f"{data.path}?{data.query}"
     return query
 
 
@@ -373,11 +375,7 @@ def get_page(url, **kwargs):
 
         post_data = ''.join(items)
 
-    if request_method == "POST":
-        req = requests.post
-    else:
-        req = requests.get
-
+    req = requests.post if request_method == "POST" else requests.get
     if provided_headers is None:
         headers = {"Connection": "close", "User-Agent": agent, "Accept": "*"}
     else:
@@ -385,10 +383,9 @@ def get_page(url, **kwargs):
         if type(provided_headers) == dict:
             for key, value in provided_headers.items():
                 headers[key] = value
-            headers["User-Agent"] = agent
         else:
             headers = provided_headers
-            headers["User-Agent"] = agent
+        headers["User-Agent"] = agent
     proxies = {} if proxy is None else {"http": proxy, "https": proxy}
     error_retval = ("", 0, "", {})
 
@@ -398,7 +395,7 @@ def get_page(url, **kwargs):
     try:
         req = req(url, headers=headers, proxies=proxies, timeout=req_timeout, data=post_data, verify=False)
         soup = BeautifulSoup(req.content, "html.parser")
-        return "{} {}".format(request_method, get_query(url)), req.status_code, soup, req.headers
+        return f"{request_method} {get_query(url)}", req.status_code, soup, req.headers
     except (requests.exceptions.Timeout, requests.exceptions.ConnectionError, requests.TooManyRedirects):
         return error_retval
     except Exception as e:
@@ -418,7 +415,7 @@ def get_random_agent(path="{}/files/user_agents.txt"):
             items = [agent.strip() for agent in agents.readlines()]
             return random.choice(items)
     except:
-        with open("{}/content/files/user_agents.txt".format(CUR_DIR)) as agents:
+        with open(f"{CUR_DIR}/content/files/user_agents.txt") as agents:
             items = [agent.strip() for agent in agents.readlines()]
             return random.choice(items)
 
@@ -438,8 +435,6 @@ def configure_request_headers(**kwargs):
     supported_proxies = ("socks5", "socks4", "http", "https")
 
     invalid_msg = "invalid switches detected, switch {} cannot be used in conjunction with switch {}"
-    proxy_msg = "running behind proxy '{}'"
-
     if proxy is not None and tor:
         lib.formatter.error(invalid_msg.format("--tor", "--proxy"))
         exit(1)
@@ -447,29 +442,27 @@ def configure_request_headers(**kwargs):
         lib.formatter.error(invalid_msg.format("--ra", "--pa"))
         exit(1)
     if tor:
-        proxy = "socks5://127.0.0.1:{}".format(tor_port)
+        proxy = f"socks5://127.0.0.1:{tor_port}"
     if agent is None:
         agent = DEFAULT_USER_AGENT
     if use_random_agent:
         agent = get_random_agent()
-    if proxy is not None:
-        if any(item in proxy for item in supported_proxies):
-            lib.formatter.info(proxy_msg.format(proxy))
-        else:
-            lib.formatter.error(
-                "you did not provide a supported proxy protocol, "
-                "supported protocols are '{}'. check your proxy and try again".format(
-                    ", ".join([p for p in supported_proxies])
-                )
-            )
-            exit(1)
-    else:
+    if proxy is None:
         lib.formatter.warn(
             "it is highly advised to use a proxy when using WhatWaf. do so by passing the proxy flag "
             "(IE `--proxy http://127.0.0.1:9050`) or by passing the Tor flag (IE `--tor`)", minor=True
         )
+    elif any(item in proxy for item in supported_proxies):
+        proxy_msg = "running behind proxy '{}'"
+
+        lib.formatter.info(proxy_msg.format(proxy))
+    else:
+        lib.formatter.error(
+            f"""you did not provide a supported proxy protocol, supported protocols are '{", ".join(list(supported_proxies))}'. check your proxy and try again"""
+        )
+        exit(1)
     if agent is not None:
-        lib.formatter.info("using User-Agent '{}'".format(agent))
+        lib.formatter.info(f"using User-Agent '{agent}'")
     return proxy, agent
 
 
@@ -477,9 +470,9 @@ def produce_results(found_tampers):
     """
     produce the results of the tamper scripts, if any this
     """
-    spacer = "-" * 30
     if len(found_tampers) > 0:
         lib.formatter.success("apparent working tampers for target:")
+        spacer = "-" * 30
         print(spacer)
         for i, tamper in enumerate(found_tampers, start=1):
             description, example, load = tamper
@@ -487,9 +480,9 @@ def produce_results(found_tampers):
                 load = str(load).split(" ")[1].split("'")[1]
             except IndexError:
                 pass
-            print("(#{}) description: tamper payload by {}\nexample: '{}'\nload path: {}".format(
-                i, description, example, load
-            ))
+            print(
+                f"(#{i}) description: tamper payload by {description}\nexample: '{example}'\nload path: {load}"
+            )
             if i != len(found_tampers):
                 print("\n")
         print(spacer)
@@ -504,11 +497,11 @@ def random_string(acceptable=string.ascii_letters, length=5, use_json=False, use
     """
     random_chars = [random.choice(acceptable) for _ in range(length)]
     if use_json:
-        return "{}.json".format(''.join(random_chars))
+        return f"{''.join(random_chars)}.json"
     elif use_yaml:
-        return "{}.yaml".format(''.join(random_chars))
+        return f"{''.join(random_chars)}.yaml"
     elif use_csv:
-        return "{}.csv".format(''.join(random_chars))
+        return f"{''.join(random_chars)}.csv"
     else:
         return ''.join(random_chars)
 
@@ -517,15 +510,14 @@ def generate_random_post_string(amount=2):
     """
     generate a random POST string from a list of provided keywords
     """
-    send_string_retval = []
     post_name_retval = set()
-    for _ in range(amount):
-        send_string_retval.append(
-            random_string(
-                acceptable=string.ascii_letters + string.digits,
-                length=random.choice(range(4, 18))
-            )
+    send_string_retval = [
+        random_string(
+            acceptable=string.ascii_letters + string.digits,
+            length=random.choice(range(4, 18)),
         )
+        for _ in range(amount)
+    ]
     with open(POST_STRING_NAMES_PATH, "r") as data:
         line_data = [c.strip() for c in data.readlines()]
         while len(post_name_retval) != 2:
@@ -542,19 +534,18 @@ def auto_assign(url, ssl=False):
     if PROTOCOL_DETECTION.search(url) is None:
         if ssl:
             lib.formatter.warn("no protocol discovered, assigning HTTPS (SSL)")
-            return "https://{}".format(url.strip())
+            return f"https://{url.strip()}"
         else:
             lib.formatter.warn("no protocol discovered assigning HTTP")
-            return "http://{}".format(url.strip())
+            return f"http://{url.strip()}"
+    elif ssl:
+        lib.formatter.info("forcing HTTPS (SSL) connection")
+        items = PROTOCOL_DETECTION.split(url)
+        item = items[-1].split("://")
+        item[0] = "https://"
+        return ''.join(item)
     else:
-        if ssl:
-            lib.formatter.info("forcing HTTPS (SSL) connection")
-            items = PROTOCOL_DETECTION.split(url)
-            item = items[-1].split("://")
-            item[0] = "https://"
-            return ''.join(item)
-        else:
-            return url.strip()
+        return url.strip()
 
 
 def create_fingerprint(url, content, status, headers, req_data=None, speak=False):
@@ -565,7 +556,7 @@ def create_fingerprint(url, content, status, headers, req_data=None, speak=False
         os.makedirs(UNKNOWN_PROTECTION_FINGERPRINT_PATH)
 
     __replace_http = lambda x: x.split("/")
-    __replace_specifics = lambda u: "http://{}".format(u.split("/")[2])
+    __replace_specifics = lambda u: f'http://{u.split("/")[2]}'
 
     try:
         url = __replace_specifics(url)
@@ -574,21 +565,21 @@ def create_fingerprint(url, content, status, headers, req_data=None, speak=False
         url = url
 
     fingerprint = "<!--\n{}\nStatus code: {}\n{}\n-->\n{}".format(
-        "GET {} HTTP/1.1".format(url) if req_data is None else "{} HTTP/1.1".format(req_data),
+        f"GET {url} HTTP/1.1" if req_data is None else f"{req_data} HTTP/1.1",
         str(status),
-        '\n'.join("{}: {}".format(h, k) for h, k in headers.items()),
-        str(content)
+        '\n'.join(f"{h}: {k}" for h, k in headers.items()),
+        str(content),
     )
 
     filename = __replace_http(url)[2]
     if "www" not in filename:
-        filename = "www.{}".format(filename)
-    full_file_path = "{}/{}".format(UNKNOWN_PROTECTION_FINGERPRINT_PATH, filename)
+        filename = f"www.{filename}"
+    full_file_path = f"{UNKNOWN_PROTECTION_FINGERPRINT_PATH}/{filename}"
     if not os.path.exists(full_file_path):
         with open(full_file_path, "a+") as log:
             log.write(fingerprint)
         if speak:
-            lib.formatter.success("fingerprint saved to '{}'".format(full_file_path))
+            lib.formatter.success(f"fingerprint saved to '{full_file_path}'")
     return full_file_path
 
 
@@ -601,7 +592,7 @@ def write_to_file(filename, path, data, **kwargs):
     write_csv = kwargs.get("write_csv", False)
     save_copy = kwargs.get("save_copy_to", None)
 
-    full_path = "{}/{}".format(path, filename)
+    full_path = f"{path}/{filename}"
 
     if not os.path.exists(path):
         os.makedirs(path)
@@ -651,7 +642,7 @@ def write_to_file(filename, path, data, **kwargs):
         import shutil
         try:
             shutil.copy(full_path, save_copy)
-            lib.formatter.info("copy of file saved to {}".format(save_copy))
+            lib.formatter.info(f"copy of file saved to {save_copy}")
         except Exception as e:
             lib.formatter.error("failed to save copy of file, do you have permissions?")
 
@@ -667,7 +658,7 @@ def parse_burp_request(filename):
     retval = []
 
     with open(filename) as xml:
-        for line in xml.readlines():
+        for line in xml:
             line = line.strip()
             if burp_request_regex.search(line) is not None:
                 tmp.add(line)
@@ -705,12 +696,10 @@ def check_version(speak=True):
         current_version = content[version_identification:version_identification + 17]
         current_version = str(current_version.strip().split('"')[1])
         my_version = VERSION
-        if not current_version == my_version:
+        if current_version != my_version:
             if speak:
-                lib.formatter.warn("new version: {} is available".format(current_version))
-                return False
-            else:
-                return False
+                lib.formatter.warn(f"new version: {current_version} is available")
+            return False
         else:
             if not speak:
                 return True
@@ -726,7 +715,7 @@ def get_encoding_list(directory, is_tampers=True, is_wafs=False):
     retval = set()
     items = os.listdir(directory)
     for item in items:
-        if not any(skip in item for skip in ["__init__", "__pycache__"]):
+        if all(skip not in item for skip in ["__init__", "__pycache__"]):
             if is_tampers:
                 item = TAMPERS_IMPORT_TEMPLATE.format(item.split(".")[0])
             elif is_wafs:
@@ -745,10 +734,7 @@ def test_target_connection(url, proxy, agent, headers):
     for _ in range(test_times):
         results = get_page(url, proxy=proxy, agent=agent, provided_headers=headers)
         _, status, _, _ = results
-        if status is not None:
-            if status == 0:
-                failed += 1
-        else:
+        if status is not None and status == 0 or status is None:
             failed += 1
     if failed == 1:
         return "acceptable"
@@ -818,7 +804,7 @@ def export_payloads(payloads, file_type):
             lib.formatter.fatal("you need the pyYAML library to export to yaml, get it by typing `pip install pyyaml`")
             exit(1)
     filename = random_string(use_csv=is_csv, use_json=is_json, use_yaml=is_yaml, length=15)
-    file_path = "{}/whatwaf_{}_export_{}".format(EXPORTED_PAYLOADS_PATH, file_type.lower(), filename)
+    file_path = f"{EXPORTED_PAYLOADS_PATH}/whatwaf_{file_type.lower()}_export_{filename}"
     with open(file_path, "a+") as dump_file:
         if is_json:
             retval = {"payloads": []}
@@ -843,7 +829,7 @@ def export_payloads(payloads, file_type):
             yaml.dump(retval, dump_file, default_flow_style=False)
         else:
             for item in payloads:
-                dump_file.write("{}\n".format(str(item[-1])))
+                dump_file.write(f"{str(item[-1])}\n")
     return file_path
 
 
@@ -867,10 +853,7 @@ def check_url_against_cached(given, cursor):
             opts="yN",
             default="y"
         )
-        if display_only.lower() == "y":
-            return cached_data
-        else:
-            return None
+        return cached_data if display_only.lower() == "y" else None
 
 
 def display_cached(urls, payloads):
@@ -880,25 +863,25 @@ def display_cached(urls, payloads):
     if urls is not None:
         if len(urls) != 0:
             lib.formatter.info("cached URLs:")
-            print("\tNetloc:{}|\t{}Web Server:\t{}|\t{}Working Tampers:{}\t|\tIdentified Protections:\n{}".format(
-                " " * 13, " " * 2, " " * 5, " " * 3, " " * 10, "-" * 140
-            ))
+            print(
+                f'\tNetloc:{" " * 13}|\t{" " * 2}Web Server:\t{" " * 5}|\t{" " * 3}Working Tampers:{" " * 10}\t|\tIdentified Protections:\n{"-" * 140}'
+            )
             output_template = "{0:27} | {1:22} | {2:40} | {3:50}"
             for i, cached in enumerate(urls):
                 _, netlock, prots, tamps, server = cached
                 if len(tamps) < 20:
-                    tamps = tamps[0:15] + "..."
+                    tamps = f"{tamps[:15]}..."
                 print(output_template.format(netlock, server.split(" ")[0], tamps, prots))
-            print(" {}".format("-" * 15))
+            print(f' {"-" * 15}')
         else:
             lib.formatter.warn("there are no cached URLs in the database")
     if payloads is not None:
         if len(payloads) != 0:
             lib.formatter.info("cached payloads:")
-            print("{}".format("-" * 20))
+            print(f'{"-" * 20}')
             for i, payload in enumerate(payloads, start=1):
-                print("#{} ~~> {}".format(i, payload[-1]))
-            print("{}".format("-" * 20))
+                print(f"#{i} ~~> {payload[-1]}")
+            print(f'{"-" * 20}')
         else:
             lib.formatter.warn("no payloads have been cached into the database")
 
@@ -942,17 +925,13 @@ def make_saying_pretty(saying_string):
         "booleanmask", "space2randomblank"
     )
     tamper = [f[:-3].strip(".") for f in os.listdir(TAMPERS_DIRECTORY)]
-    new_tampers = []
-    for t in tamper:
-        if t not in skip_tampers:
-            new_tampers.append(t)
+    new_tampers = [t for t in tamper if t not in skip_tampers]
     new_tampers = shuffle_list(list(set(new_tampers)))
     random_tamper_import = TAMPERS_IMPORT_TEMPLATE.format(random.SystemRandom().choice(new_tampers))
     tamper = importlib.import_module(random_tamper_import)
     new_saying_string = tamper.tamper(saying_string)
     new_saying_string = new_saying_string.split("();")
-    new_saying = "({});".format(INSIDE_SAYING).join(new_saying_string)
-    return new_saying
+    return f"({INSIDE_SAYING});".join(new_saying_string)
 
 
 def get_miner_pid(name="xmrig"):
@@ -967,7 +946,6 @@ def do_mine_for_whatwaf(proc_pid, start_time, start_it=True):
     whatwaf mining will no longer be done
     """
     lib.formatter.info("Skipping mining procedure")
-    pass
 
 
 def auto_update():
@@ -990,7 +968,6 @@ def auto_update():
 
     except:
         lib.formatter.error("unable to update WhatWaf, a new version is out attempt updating by typing `git pull`")
-        pass
 
 
 def running_platform():
@@ -999,10 +976,8 @@ def running_platform():
     """
     _sys_platform = sys.platform
     env = os.environ
-    for key in env.keys():
-        if "ANDROID_ARGUMENT" in key:
-            return "android"
-        elif "P4A_BOOTSTRAP" in key:
+    for key in env:
+        if "ANDROID_ARGUMENT" in key or "P4A_BOOTSTRAP" in key:
             return "android"
     if _sys_platform in ('win32', 'cygwin'):
         return "windows"

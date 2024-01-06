@@ -3,4 +3,4 @@ __type__ = "putting the payload in-between a comment with obfuscation in it"
 
 
 def tamper(payload, **kwargs):
-    return "/*!00000{}*/".format(payload)
+    return f"/*!00000{payload}*/"

@@ -8,15 +8,12 @@ __type__ = "changing characters into a wildcard"
 
 def tamper(payload, **kwargs):
     wildcard = ["*", "?"]
-    safe_chars = string.punctuation + " "
+    safe_chars = f"{string.punctuation} "
     retval = ""
     for char in list(payload):
-        if not any(p == char for p in safe_chars):
+        if all(p != char for p in safe_chars):
             do_it = random.randint(1, 10) <= 3
-            if do_it:
-                retval += random.choice(wildcard)
-            else:
-                retval += char
+            retval += random.choice(wildcard) if do_it else char
         else:
             retval += char
     return retval
